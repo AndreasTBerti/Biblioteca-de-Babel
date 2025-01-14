@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import requests
 from bs4 import BeautifulSoup
 import os
@@ -7,12 +7,13 @@ from random import randint, choice
 
 @dataclass
 class ColetorDePalavra():
-    url: str
+    url: str #url do site
+    show: bool = field(default=False, kw_only=True) #imprime as palavras no terminal caso definida como True pelo usuário
 
     def __post_init__(self):
 
         # Lista de palavras palavras tratadas para serem utilizadas na biblioteca
-        palavras_tratadas = []
+        self.palavras_tratadas = []
 
 
         # Requisição de acesso ao site
@@ -41,12 +42,16 @@ class ColetorDePalavra():
                 if texto_tratado != '': #Excluino espaços vazios ou sem importância
                     if '.' in texto_tratado: #Seprando palavras por ponto
                         divisao_provisoria: list = texto_tratado.split('.')
-                        palavras_tratadas.extend(divisao_provisoria)
+                        self.palavras_tratadas.extend(divisao_provisoria)
                     else:
-                        palavras_tratadas.append(texto_tratado) 
+                        self.palavras_tratadas.append(texto_tratado) 
 
-        print(palavras_tratadas)
+        # Imprime as palavras coletadas no terminal caso o usuário deseje
+        if self.show:
+            print(self.palavras_tratadas)
 
+
+    def gerarBiblioteca(self):
         # Criação do diretório no qual os arquivos serão armazenados
         try:
             os.mkdir("BibliotecaDeBabel")
@@ -62,7 +67,7 @@ class ColetorDePalavra():
             # Se o arquivo já existir, outro nome será gerado
             if not os.path.exists(f"BibliotecaDeBabel/{nome_arquivo_gerado}.txt"): #Verificando se o arquivo existe
                 with open(f"BibliotecaDeBabel/{nome_arquivo_gerado}.txt", 'w', encoding="utf-8") as file:
-                    for index, palavra in enumerate(palavras_tratadas):
+                    for index, palavra in enumerate(self.palavras_tratadas):
                         file.write(f"{index + 1}. {palavra.capitalize()}\n")
 
                 verificador = True
@@ -114,7 +119,11 @@ class ColetorDePalavra():
 
 # Execução teste para o programa
 def main():   
-    teste = ColetorDePalavra('https://docs.python.org/3/library/functions.html#sorted')
+
+    url = 'https://docs.python.org/3/library/functions.html#sorted'
+
+    teste = ColetorDePalavra(url, show=True).gerarBiblioteca()
+
 
 if __name__ == "__main__":
     main()

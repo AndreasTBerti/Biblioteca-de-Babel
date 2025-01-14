@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 import requests
 from bs4 import BeautifulSoup
 import os
@@ -8,7 +8,6 @@ from random import randint, choice
 @dataclass
 class ColetorDePalavra():
     url: str #url do site
-    show: bool = field(default=False, kw_only=True) #imprime as palavras no terminal caso definida como True pelo usuário
 
     def __post_init__(self):
 
@@ -36,7 +35,7 @@ class ColetorDePalavra():
             for texto in lista_textos:
 
                 texto_tratado = texto.replace("\n", "") #Primeiro Tratamento
-                texto_tratado = texto_tratado.strip('.""!()?@©|[]$&,<>:;=+-/') #Segundo Tratamento
+                texto_tratado = texto_tratado.strip('.""!()?@©|[]$&,<>:;=+-/»') #Segundo Tratamento
 
                 # Último tratamento
                 if texto_tratado != '': #Excluino espaços vazios ou sem importância
@@ -46,25 +45,23 @@ class ColetorDePalavra():
                     else:
                         self.palavras_tratadas.append(texto_tratado) 
 
-        # Imprime as palavras coletadas no terminal caso o usuário deseje
-        if self.show:
-            print(self.palavras_tratadas)
 
 
-    def gerarBiblioteca(self):
-        # Criação do diretório no qual os arquivos serão armazenados
+    # Função que cria o diretório e o arquivo de texto com as palavras coletadas.
+    def criarBiblioteca(self) -> None:
+        # Criação do diretório no qual os arquivos serão armazenados.
         try:
             os.mkdir("BibliotecaDeBabel")
         except FileExistsError:
             pass
 
-        # Processo de criação do arquivo
+        # Processo de criação do arquivo.
         verificador: bool = False
         while not verificador:
 
-            nome_arquivo_gerado = self.geradorDeNomes() #Nome a ser utilizado no arquivo
+            nome_arquivo_gerado = self.criarNome() #Nome a ser utilizado no arquivo
 
-            # Se o arquivo já existir, outro nome será gerado
+            # Verifica se já existe um arquivo com esse nome. Se existir, outro nome será gerado.
             if not os.path.exists(f"BibliotecaDeBabel/{nome_arquivo_gerado}.txt"): #Verificando se o arquivo existe
                 with open(f"BibliotecaDeBabel/{nome_arquivo_gerado}.txt", 'w', encoding="utf-8") as file:
                     for index, palavra in enumerate(self.palavras_tratadas):
@@ -75,8 +72,8 @@ class ColetorDePalavra():
         print(f"Novo arquivo gerado: {nome_arquivo_gerado}")
 
 
-    # Função que gera um nome aleatório para o arquivo criado
-    def geradorDeNomes(self) -> str:
+    # Função que gera um nome aleatório para o arquivo criado.
+    def criarNome(self) -> str:
 
         # Palavras e números coletados para integrar a senha
         palavras_chave: list = []
@@ -117,12 +114,30 @@ class ColetorDePalavra():
         return palavra_chave_senha + numeros_chave
         
 
-# Execução teste para o programa
+    # Função que retorna a primeira palavra da lista
+    def getPalavra(self) -> str:
+        return self.palavras_tratadas[0]
+
+    # Função que retorna a lista completa de palavras
+    def getPalavras(self) -> list:
+        return ', '.join(self.palavras_tratadas)
+
+
+
+# Execução teste para o programa.
 def main():   
 
     url = 'https://docs.python.org/3/library/functions.html#sorted'
 
-    teste = ColetorDePalavra(url, show=True).gerarBiblioteca()
+    teste = ColetorDePalavra(url)
+
+    palavra = teste.getPalavra()
+    print(palavra)
+
+    palavras = teste.getPalavras()
+    print(palavras)
+
+    teste.criarBiblioteca()
 
 
 if __name__ == "__main__":

@@ -10,8 +10,10 @@ class ColetorDePalavra():
     url: str
 
     def __post_init__(self):
+
         # Lista de palavras palavras tratadas para serem utilizadas na biblioteca
         palavras_tratadas = []
+
 
         # Requisição de acesso ao site
         try:
@@ -33,11 +35,15 @@ class ColetorDePalavra():
             for texto in lista_textos:
 
                 texto_tratado = texto.replace("\n", "") #Primeiro Tratamento
-                texto_tratado = texto_tratado.strip('.""!()?@©|[]$&,') #Segundo Tratamento
+                texto_tratado = texto_tratado.strip('.""!()?@©|[]$&,<>:;=+-/') #Segundo Tratamento
 
                 # Último tratamento
-                if texto_tratado != '' and texto_tratado != "-":
-                    palavras_tratadas.append(texto_tratado) 
+                if texto_tratado != '': #Excluino espaços vazios ou sem importância
+                    if '.' in texto_tratado: #Seprando palavras por ponto
+                        divisao_provisoria: list = texto_tratado.split('.')
+                        palavras_tratadas.extend(divisao_provisoria)
+                    else:
+                        palavras_tratadas.append(texto_tratado) 
 
         print(palavras_tratadas)
 
@@ -55,7 +61,7 @@ class ColetorDePalavra():
 
             # Se o arquivo já existir, outro nome será gerado
             if not os.path.exists(f"BibliotecaDeBabel/{nome_arquivo_gerado}.txt"): #Verificando se o arquivo existe
-                with open(f"BibliotecaDeBabel/{nome_arquivo_gerado}.txt", 'a') as file:
+                with open(f"BibliotecaDeBabel/{nome_arquivo_gerado}.txt", 'w', encoding="utf-8") as file:
                     for index, palavra in enumerate(palavras_tratadas):
                         file.write(f"{index + 1}. {palavra.capitalize()}\n")
 
@@ -105,7 +111,8 @@ class ColetorDePalavra():
         #print(palavra_chave_senha + numeros_chave)
         return palavra_chave_senha + numeros_chave
         
-        
+
+# Execução teste para o programa
 def main():   
     teste = ColetorDePalavra('https://docs.python.org/3/library/functions.html#sorted')
 

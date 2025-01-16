@@ -1,11 +1,9 @@
-from dataclasses import dataclass
 import requests
 from bs4 import BeautifulSoup
 import os
 
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QListWidget, QLineEdit, QScrollArea
-
+from PySide6.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout
+from PySide6.QtWidgets import QListWidget, QLineEdit, QScrollArea
 from random import randint, choice
 
 class InterfaceGrafica(QWidget):
@@ -62,7 +60,7 @@ class InterfaceGrafica(QWidget):
     def exibirArquivos(self):
         
         # Coletando os textos já armazenados
-        arquivos_acervo = os.listdir("BibliotecaDeBabel")
+        arquivos_acervo = os.listdir("Acervo")
 
         self.file_list.clear()
         for item in arquivos_acervo:
@@ -76,7 +74,7 @@ class BibliotecaDeBabel(InterfaceGrafica):
 
         # Criação do diretório no qual os arquivos serão armazenados.
         try:
-            os.mkdir("BibliotecaDeBabel")
+            os.mkdir("Acervo")
         except FileExistsError:
             pass
 
@@ -137,8 +135,8 @@ class BibliotecaDeBabel(InterfaceGrafica):
             nome_arquivo_gerado = self.criarNome() #Nome a ser utilizado no arquivo
 
             # Verifica se já existe um arquivo com esse nome. Se existir, outro nome será gerado.
-            if not os.path.exists(f"BibliotecaDeBabel/{nome_arquivo_gerado}.txt"): #Verificando se o arquivo existe
-                with open(f"BibliotecaDeBabel/{nome_arquivo_gerado}.txt", 'w', encoding="utf-8") as file: #Criando o arquivo
+            if not os.path.exists(f"Acervo/{nome_arquivo_gerado}.txt"): #Verificando se o arquivo existe
+                with open(f"Acervo/{nome_arquivo_gerado}.txt", 'w', encoding="utf-8") as file: #Criando o arquivo
                     for index, palavra in enumerate(palavras_tratadas): #Coletando as palavras
                         file.write(f"{index + 1}. {palavra.capitalize()}\n") #Armazenando-as no arquivo
 
@@ -153,7 +151,7 @@ class BibliotecaDeBabel(InterfaceGrafica):
 
         textfilename = self.file_list.currentItem().text()
 
-        with open(f"BibliotecaDeBabel/{textfilename}", encoding="utf-8") as file:
+        with open(f"Acervo/{textfilename}", encoding="utf-8") as file:
             texto = file.readlines()
             for palavra in texto:
                 self.texto_exibido += palavra + "\n"
@@ -206,11 +204,7 @@ class BibliotecaDeBabel(InterfaceGrafica):
 # Execução teste para o programa.
 def main():   
 
-    url: str = "https://www.sinonimos.com.br/levar/"
-
-    teste = BibliotecaDeBabel()
-
-    #teste.gerarArquivo(url)
+    biblioteca: BibliotecaDeBabel = BibliotecaDeBabel()
 
 
 if __name__ == "__main__":

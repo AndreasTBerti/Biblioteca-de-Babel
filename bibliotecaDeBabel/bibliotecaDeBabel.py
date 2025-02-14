@@ -138,6 +138,8 @@ class BibliotecaDeBabel(InterfaceGrafica):
             if not os.path.exists(f"Acervo/{nome_arquivo_gerado}.txt"): #Verificando se o arquivo existe
                 with open(f"Acervo/{nome_arquivo_gerado}.txt", 'w', encoding="utf-8") as file: #Criando o arquivo
                     for index, palavra in enumerate(palavras_tratadas): #Coletando as palavras
+                        if index == 999:
+                            break
                         file.write(f"{index + 1}. {palavra.capitalize()}\n") #Armazenando-as no arquivo
 
                 verificador = True
